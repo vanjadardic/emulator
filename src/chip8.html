@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Chip-8</title>
+      <script src="chip8.js"></script>
+      <script>
+         var emulator;
+
+         onload = function() {
+            emulator = new Chip8(document.querySelector('#display'), 8, 0.5);
+
+            document.querySelector('#rom').addEventListener('change', function(evt) {
+               var files = evt.target.files;
+               if (!files.length) {
+                  return;
+               }
+               var file = files[0];
+               var reader = new FileReader();
+               reader.onloadend = function(evt) {
+                  if (evt.target.readyState === FileReader.DONE) {
+                     emulator.load(new Uint8Array(evt.target.result));
+                  }
+               };
+               reader.readAsArrayBuffer(file);
+            });
+
+            document.querySelector('#reset').addEventListener('click', function(evt) {
+               emulator.reset();
+            });
+
+            document.querySelector('#volume').addEventListener('change', function(evt) {
+               emulator.setVolume(parseFloat(evt.target.value));
+            });
+
+            document.querySelector('#scale').addEventListener('change', function(evt) {
+               emulator.setScale(parseInt(evt.target.value));
+            });
+         };
+      </script>
+      <style>
+         canvas {
+            border: 4px solid red;
+         }
+         table.keypad {
+            border-collapse: collapse;
+         }
+         table.keypad, table.keypad td {
+            border: 1px solid black;
+         }
+         table.keypad tr td {
+            width: 20px;
+            text-align:center;
+         }
+      </style>
+   </head>
+   <body>
+      <input type="file" id="rom" accept=".ch8" style="width:100%"/>
+      <hr/>
+      <button id="reset">Reset</button>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <label for="volume">Volume</label>
+      <input type="range" id="volume" min="0" max="1" step="0.01" value="0.5" style="height:10px"/>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <label for="scale">Scale</label>
+      <input type="number" id="scale" min="1" max="30" value="8"/>
+      <hr/>
+      <canvas id="display" width="512" height="256"></canvas>
+      <hr/>
+      <label>Keyboard</label>
+      <table>
+         <tr>
+            <td>
+               <table class="keypad">
+                  <tr><td>1</td><td>2</td><td>3</td><td>C</td></tr>
+                  <tr><td>4</td><td>5</td><td>6</td><td>D</td></tr>
+                  <tr><td>7</td><td>8</td><td>9</td><td>E</td></tr>
+                  <tr><td>A</td><td>0</td><td>B</td><td>F</td></tr>
+               </table>
+            </td>
+            <td>--></td>
+            <td>
+               <table class="keypad">
+                  <tr><td>4</td><td>5</td><td>6</td><td>7</td></tr>
+                  <tr><td>R</td><td>T</td><td>Y</td><td>U</td></tr>
+                  <tr><td>F</td><td>G</td><td>H</td><td>J</td></tr>
+                  <tr><td>V</td><td>B</td><td>N</td><td>M</td></tr>
+               </table>
+            </td>
+         </tr>
+      </table>
+   </body>
+</html>
